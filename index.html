@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>inQUIZitive 2.0 | ACM Student Chapter, GSFC University</title>
+  <!-- Google Fonts for Ultra-Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #060913;
+      --bg-surface: #0c1222;
+      --bg-card: rgba(16, 24, 45, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      /* Category Theme Colors */
+      --cat-1: #38bdf8; /* Tech Companies & Brands - Cyan/Sky */
+      --cat-1-glow: rgba(56, 189, 248, 0.25);
+      --cat-2: #34d399; /* CS Fundamentals - Mint/Emerald */
+      --cat-2-glow: rgba(52, 211, 153, 0.25);
+      --cat-3: #fbbf24; /* Tech World - Amber/Gold */
+      --cat-3-glow: rgba(251, 191, 36, 0.25);
+      --cat-4: #c084fc; /* Mystery Tech - Purple/Violet */
+      --cat-4-glow: rgba(192, 132, 252, 0.25);
+      --cat-5: #fb7185; /* Tech Visuals - Rose/Coral */
+      --cat-5-glow: rgba(251, 113, 133, 0.25);
+      
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(192, 132, 252, 0.12), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(52, 211, 153, 0.08), transparent 35%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(12, 18, 34, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+    }
+
+    .subtitle {
+      font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cat-3);
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    .btn-action:active {
+      transform: translateY(0);
+    }
+
+    /* 5x5 QUIZ BOARD */
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      width: 100%;
+      position: relative;
+    }
+
+    .board-grid.is-locked {
+      pointer-events: none;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Category Headers */
+    .cat-header {
+      padding: 16px 12px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.75rem, 0.95vw, 0.92rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cat-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .cat-1 .cat-header { color: var(--cat-1); }
+    .cat-1 .cat-header::before { background: var(--cat-1); box-shadow: 0 0 12px var(--cat-1); }
+
+    .cat-2 .cat-header { color: var(--cat-2); }
+    .cat-2 .cat-header::before { background: var(--cat-2); box-shadow: 0 0 12px var(--cat-2); }
+
+    .cat-3 .cat-header { color: var(--cat-3); }
+    .cat-3 .cat-header::before { background: var(--cat-3); box-shadow: 0 0 12px var(--cat-3); }
+
+    .cat-4 .cat-header { color: var(--cat-4); }
+    .cat-4 .cat-header::before { background: var(--cat-4); box-shadow: 0 0 12px var(--cat-4); }
+
+    .cat-5 .cat-header { color: var(--cat-5); }
+    .cat-5 .cat-header::before { background: var(--cat-5); box-shadow: 0 0 12px var(--cat-5); }
+
+    /* CARD CONTAINER WITH 3D FLIP */
+    .card-slot {
+      height: clamp(100px, 12vh, 135px);
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      border-radius: var(--radius-md);
+    }
+
+    .card-slot:hover:not(.locked):not(.visited) .card-inner {
+      transform: translateY(-5px) rotateY(180deg);
+    }
+
+    .card-slot.is-active .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* CARD FACES */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-md);
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 10px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, rgba(16, 24, 45, 0.9), rgba(9, 14, 28, 0.95));
+      backdrop-filter: blur(8px);
+    }
+
+    .card-front .cat-name-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .card-front .q-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.8rem, 2.3vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(145deg, rgba(24, 35, 68, 0.95), rgba(13, 20, 42, 0.98));
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-back .flip-icon {
+      font-size: 1.4rem;
+    }
+
+    .card-back .flip-text {
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Category Specific Accents for Cards */
+    .cat-1 .card-front .cat-name-tag { color: var(--cat-1); }
+    .cat-1 .card-back { border-color: var(--cat-1); color: var(--cat-1); }
+    .cat-1 .card-slot:hover .card-inner { box-shadow: 0 10px 25px var(--cat-1-glow); }
+
+    .cat-2 .card-front .cat-name-tag { color: var(--cat-2); }
+    .cat-2 .card-back { border-color: var(--cat-2); color: var(--cat-2); }
+    .cat-2 .card-slot:hover .card-inner { box-shadow: 0 10px 25px var(--cat-2-glow); }
+
+    .cat-3 .card-front .cat-name-tag { color: var(--cat-3); }
+    .cat-3 .card-back { border-color: var(--cat-3); color: var(--cat-3); }
+    .cat-3 .card-slot:hover .card-inner { box-shadow: 0 10px 25px var(--cat-3-glow); }
+
+    .cat-4 .card-front .cat-name-tag { color: var(--cat-4); }
+    .cat-4 .card-back { border-color: var(--cat-4); color: var(--cat-4); }
+    .cat-4 .card-slot:hover .card-inner { box-shadow: 0 10px 25px var(--cat-4-glow); }
+
+    .cat-5 .card-front .cat-name-tag { color: var(--cat-5); }
+    .cat-5 .card-back { border-color: var(--cat-5); color: var(--cat-5); }
+    .cat-5 .card-slot:hover .card-inner { box-shadow: 0 10px 25px var(--cat-5-glow); }
+
+    /* VISITED / PLAYED STATE */
+    .card-slot.visited {
+      opacity: 0.35;
+      filter: grayscale(0.6);
+    }
+    .card-slot.visited .card-front::after {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.9rem;
+      color: #34d399;
+      font-weight: 800;
+    }
+
+    /* LOCKED STATE (When a question is open) */
+    .board-grid.is-locked .card-slot:not(.is-active) {
+      opacity: 0.25;
+      filter: blur(1px);
+      cursor: not-allowed;
+    }
+
+    /* POPUP MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(3, 6, 15, 0.85);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-window {
+      width: min(880px, 94vw);
+      max-height: 88vh;
+      background: linear-gradient(160deg, #0e162c 0%, #080d1a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.92) translateY(20px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .modal-backdrop.is-open .modal-window {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Modal Top Bar */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-tag-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-category-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+
+    .modal-q-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close-btn:hover {
+      background: #f43f5e;
+      border-color: #f43f5e;
+      transform: rotate(90deg) scale(1.05);
+    }
+
+    /* Modal Body & Scrolling */
+    .modal-content-area {
+      padding: 32px 32px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Smooth Custom Scrollbar */
+    .modal-content-area::-webkit-scrollbar {
+      width: 7px;
+    }
+    .modal-content-area::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .modal-content-area::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+    .modal-content-area::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Standard Question Typography */
+    .question-text {
+      font-size: clamp(1.3rem, 2.2vw, 1.85rem);
+      line-height: 1.45;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    /* MYSTERY TECH - SEPARATE CLUES */
+    .clues-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .clue-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: rgba(192, 132, 252, 0.05);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      animation: slideInClue 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+
+    .clue-card:nth-child(1) { animation-delay: 0.05s; }
+    .clue-card:nth-child(2) { animation-delay: 0.15s; }
+    .clue-card:nth-child(3) { animation-delay: 0.25s; }
+
+    .clue-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3);
+    }
+
+    .clue-content {
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1.45;
+      color: #f1f5f9;
+    }
+
+    .who-am-i-prompt {
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ec4899;
+      text-align: center;
+      letter-spacing: 0.05em;
+      animation: fadeIn 0.4s ease 0.35s forwards;
+      opacity: 0;
+    }
+
+    /* TECH VISUALS - IMAGE CONTAINER & PLACEHOLDER */
+    .visual-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .image-frame {
+      width: 100%;
+      height: clamp(240px, 38vh, 360px);
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(251, 113, 133, 0.4);
+      background: rgba(3, 6, 15, 0.6);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: none;
+      border-radius: var(--radius-sm);
+    }
+
+    .placeholder-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+      padding: 20px;
+      color: var(--text-muted);
+    }
+
+    .placeholder-icon {
+      font-size: 2.8rem;
+      color: var(--cat-5);
+      opacity: 0.8;
+    }
+
+    .placeholder-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .placeholder-path {
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: var(--cat-5);
+      background: rgba(251, 113, 133, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(251, 113, 133, 0.25);
+    }
+
+    .upload-fallback-btn {
+      margin-top: 4px;
+      font-size: 0.78rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .upload-fallback-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Modal Close Action Footer */
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 28px;
+      border-top: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-close-modal {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-close-modal:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInClue {
+      from { opacity: 0; transform: translateX(-15px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* RESPONSIVENESS */
+    @media (max-width: 1024px) {
+      .board-grid {
+        gap: 10px;
+      }
+      .cat-header {
+        font-size: 0.75rem;
+        min-height: 64px;
+        padding: 10px 6px;
+      }
+      .card-slot {
+        height: 110px;
+      }
+      .card-front .cat-name-tag {
+        font-size: 0.6rem;
+      }
+      .card-front .q-tag {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .board-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .column {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+      }
+      .cat-header {
+        grid-column: 1 / -1;
+        min-height: 48px;
+      }
+      .card-slot {
+        height: 90px;
+      }
+      .card-front .cat-name-tag {
+        display: none;
+      }
+      .card-front .q-tag {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="brand-title">
+        <h1>inQUIZitive 2.0</h1>
+        <div class="subtitle">ACM Student Chapter, GSFC University</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-action" id="fullscreenBtn" type="button" title="Toggle Fullscreen">
+          <span id="fsIcon">⛶</span> Fullscreen
+        </button>
+        <button class="btn-action" id="resetBtn" type="button" title="Reset All Cards">
+          ↺ Reset Board
+        </button>
+      </div>
+    </header>
+
+    <!-- 5x5 QUIZ BOARD -->
+    <main class="board-grid" id="boardGrid" aria-label="Quiz Board 5x5"></main>
+  </div>
+
+  <!-- QUESTION POPUP MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal-window" id="modalWindow">
+      <div class="modal-header">
+        <div class="modal-tag-group">
+          <span class="modal-category-badge" id="modalCatBadge"></span>
+          <span class="modal-q-badge" id="modalQBadge"></span>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" type="button" aria-label="Close question">&times;</button>
+      </div>
+
+      <div class="modal-content-area" id="modalContentArea">
+        <!-- Injected dynamically based on category -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-close-modal" id="modalFooterCloseBtn" type="button">Close Question</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file picker for quick Tech Visual image change -->
+  <input type="file" id="visualImageUploader" accept="image/*" style="display: none;" />
+
+  <script>
+    // Quiz Dataset: 5 Categories, 5 Questions Each
+    const quizDataset = [
+      {
+        id: 1,
+        className: 'cat-1',
+        category: 'TECH COMPANIES AND BRANDS',
+        shortName: 'Tech Brands',
+        type: 'standard',
+        questions: [
+          'A university has hundreds of computers, access points, switches and routers that need to communicate across its network. One company is particularly well known for networking hardware and enterprise networking solutions. Which company is it?',
+          'A company wants to run virtual machines, databases, storage systems and machine-learning workloads without maintaining its own physical data centre. Which cloud platform is widely known for providing these services?',
+          'A developer wants a company known for providing enterprise Java technologies, databases and business software solutions. Which company is strongly associated with these technologies?',
+          'The company became famous for its search engine but has expanded into smartphones, cloud computing, AI, autonomous vehicles and numerous internet services. Which company is it?',
+          'A company develops enterprise Linux technologies, Kubernetes-related solutions and open-source software for businesses. Which company is it?'
+        ]
+      },
+      {
+        id: 2,
+        className: 'cat-2',
+        category: 'CS FUNDAMENTALS',
+        shortName: 'CS Fundamentals',
+        type: 'standard',
+        questions: [
+          'Imagine you are using the Undo button in a text editor. The most recent action is undone first, followed by the action before it. Which data structure follows this same principle?',
+          'You have a sorted list of names and want to find one name quickly without checking every name from the beginning. Which searching algorithm can help you do this?',
+          'A navigation app calculates different possible routes between your location and your destination and finds a suitable path through connected locations. Which computer-science concept is commonly used to represent these connected locations and paths?',
+          'You frequently open the same website, and some parts of it load faster the next time you visit. Your browser can temporarily store frequently used information to speed things up. What is this temporary storage commonly called?',
+          'When you log into a college portal, the system can find your name, enrollment number, subjects, and marks from stored records. Which system is responsible for organizing and managing these records?'
+        ]
+      },
+      {
+        id: 3,
+        className: 'cat-3',
+        category: 'TECH WORLD',
+        shortName: 'Tech World',
+        type: 'standard',
+        questions: [
+          'You install an application from GitHub and notice that its source code is publicly available for people to inspect, modify and contribute to. What broad software-development model does this represent?',
+          'Imagine you are working with a language that was originally developed at Sun Microsystems and later became part of Oracle\'s technology portfolio. Which programming language are we talking about?',
+          'Imagine thousands of people around the world collaboratively creating and editing an online encyclopedia rather than one company writing every article. What major website follows this model?',
+          'A development team is working on the same software project from different locations. Each developer can work on their own copy, record changes, merge contributions, and go back to an earlier version when something goes wrong. What technology is commonly used for this workflow?',
+          'A developer says, “It works perfectly on my laptop, but it fails on the server.” To avoid differences between development and production environments, the application is packaged together with its dependencies so it can run consistently across systems. What technology approach is being used?'
+        ]
+      },
+      {
+        id: 4,
+        className: 'cat-4',
+        category: 'MYSTERY TECH',
+        shortName: 'Mystery Tech',
+        type: 'clues',
+        questions: [
+          {
+            clues: [
+              'You may have interacted with me without realizing it when visiting a website.',
+              'I help translate a human-readable website address into a numerical address.',
+              'Without me, typing a domain name into your browser would not work in the usual way.'
+            ],
+            prompt: 'Who am I?'
+          },
+          {
+            clues: [
+              'I help several servers share incoming work.',
+              'If one server becomes overloaded, I can send new requests elsewhere.',
+              'Websites with millions of visitors often depend on me.'
+            ],
+            prompt: 'Who am I?'
+          },
+          {
+            clues: [
+              'I can make your computer appear to run multiple computers inside one physical machine.',
+              'I allow virtual machines to share underlying hardware.',
+              'Data centres use me extensively to improve hardware utilization.'
+            ],
+            prompt: 'Who am I?'
+          },
+          {
+            clues: [
+              'I can manipulate an AI system without directly modifying its underlying model.',
+              'I often involve carefully crafted instructions.',
+              'My goal may be to make the model ignore or conflict with its original instructions.'
+            ],
+            prompt: 'Who am I?'
+          },
+          {
+            clues: [
+              'I am not a server, but I can determine where packets should go.',
+              'I examine network addressing information.',
+              'Your home network and the internet depend on devices performing my role.'
+            ],
+            prompt: 'Who am I?'
+          }
+        ]
+      },
+      {
+        id: 5,
+        className: 'cat-5',
+        category: 'TECH VISUALS',
+        shortName: 'Tech Visuals',
+        type: 'visual',
+        questions: [
+          'It allows developers and network professionals to observe what is travelling across a network. Identify the tool.',
+          'The technology represented here is not primarily a container itself; it is used to deploy, manage and scale containerized workloads across infrastructure. What is it?',
+          'It is small enough to fit into many physical computing projects, yet capable of running a complete operating system and applications. What device is being shown in the architechture?',
+          'The company behind this visual is one of India\'s major IT services firms. The twist is that its history extends beyond information technology into consumer products and other businesses. Which company is represented?',
+          'The machine in the image is not a conventional computer and does not use ordinary CPU cores as its primary computational units. The company behind it is also famous for mainframes, enterprise software and the famous Watson AI system. Which company is this?'
+        ]
+      }
+    ];
+
+    // Local custom images cache (if uploaded in browser session)
+    const visualCustomImages = {};
+
+    const boardGrid = document.getElementById('boardGrid');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalWindow = document.getElementById('modalWindow');
+    const modalCatBadge = document.getElementById('modalCatBadge');
+    const modalQBadge = document.getElementById('modalQBadge');
+    const modalContentArea = document.getElementById('modalContentArea');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalFooterCloseBtn = document.getElementById('modalFooterCloseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const visualImageUploader = document.getElementById('visualImageUploader');
+
+    let currentActiveCard = null;
+    let pendingVisualUploadIndex = null;
+
+    // Render the 5x5 Board
+    function buildBoard() {
+      boardGrid.innerHTML = '';
+      
+      quizDataset.forEach((catObj, catIdx) => {
+        const colElem = document.createElement('section');
+        colElem.className = `column ${catObj.className}`;
+        
+        // Category Title Header
+        const catHeader = document.createElement('div');
+        catHeader.className = 'cat-header';
+        catHeader.textContent = catObj.category;
+        colElem.appendChild(catHeader);
+
+        // 5 Question Cards per Category
+        catObj.questions.forEach((qData, qIdx) => {
+          const qNum = qIdx + 1;
+          const cardSlot = document.createElement('div');
+          cardSlot.className = 'card-slot';
+          cardSlot.setAttribute('role', 'button');
+          cardSlot.setAttribute('tabindex', '0');
+          cardSlot.setAttribute('aria-label', `${catObj.category} - Question ${qNum}`);
+          cardSlot.dataset.cat = catIdx;
+          cardSlot.dataset.q = qIdx;
+
+          cardSlot.innerHTML = `
+            <div class="card-inner">
+              <div class="card-face card-front">
+                <span class="cat-name-tag">${catObj.category}</span>
+                <span class="q-tag">Q${qNum}</span>
+              </div>
+              <div class="card-face card-back">
+                <span class="flip-icon">⚡</span>
+                <span class="flip-text">Click to Reveal</span>
+              </div>
+            </div>
+          `;
+
+          const triggerOpen = () => {
+            if (boardGrid.classList.contains('is-locked')) return;
+            openQuestionModal(cardSlot, catObj, qIdx);
+          };
+
+          cardSlot.addEventListener('click', triggerOpen);
+          cardSlot.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              triggerOpen();
+            }
+          });
+
+          colElem.appendChild(cardSlot);
+        });
+
+        boardGrid.appendChild(colElem);
+      });
+    }
+
+    // Open Question in Modal
+    function openQuestionModal(cardSlot, catObj, qIdx) {
+      currentActiveCard = cardSlot;
+      
+      // LOCK all other cards while modal is open
+      boardGrid.classList.add('is-locked');
+      cardSlot.classList.add('is-active');
+
+      const qNum = qIdx + 1;
+      modalCatBadge.textContent = catObj.category;
+      modalCatBadge.style.color = getComputedStyle(document.documentElement).getPropertyValue(`--${catObj.className.replace('cat-', 'cat-')}`).trim();
+      modalCatBadge.style.borderColor = modalCatBadge.style.color;
+      modalQBadge.textContent = `QUESTION ${qNum}`;
+
+      modalContentArea.innerHTML = '';
+
+      if (catObj.type === 'standard') {
+        const questionText = catObj.questions[qIdx];
+        modalContentArea.innerHTML = `<div class="question-text">${escapeHtml(questionText)}</div>`;
+      } 
+      else if (catObj.type === 'clues') {
+        const mysteryItem = catObj.questions[qIdx];
+        let cluesHtml = `<div class="clues-wrapper">`;
+        mysteryItem.clues.forEach((clue, idx) => {
+          cluesHtml += `
+            <div class="clue-card">
+              <span class="clue-badge">CLUE ${idx + 1}</span>
+              <div class="clue-content">${escapeHtml(clue)}</div>
+            </div>
+          `;
+        });
+        cluesHtml += `</div><div class="who-am-i-prompt">${escapeHtml(mysteryItem.prompt || 'Who am I?')}</div>`;
+        modalContentArea.innerHTML = cluesHtml;
+      } 
+      else if (catObj.type === 'visual') {
+        const questionText = catObj.questions[qIdx];
+        const visualNum = qNum;
+        const defaultImagePath = `assets/tech-visual-${visualNum}.png`;
+        const customSrc = visualCustomImages[visualNum];
+
+        modalContentArea.innerHTML = `
+          <div class="visual-wrapper">
+            <div class="image-frame" id="imageFrame">
+              <img id="visualImg" alt="Tech Visual ${visualNum}" />
+              <div class="placeholder-view" id="placeholderView">
+                <div class="placeholder-icon">🖼️</div>
+                <div class="placeholder-title">Tech Visual Image Placeholder</div>
+                <div class="placeholder-path">${defaultImagePath}</div>
+                <button class="upload-fallback-btn" id="uploadBtn" type="button">📁 Load / Preview Local Image</button>
+              </div>
+            </div>
+            <div class="question-text">${escapeHtml(questionText)}</div>
+          </div>
+        `;
+
+        const imgElem = modalContentArea.querySelector('#visualImg');
+        const placeholderElem = modalContentArea.querySelector('#placeholderView');
+        const uploadBtn = modalContentArea.querySelector('#uploadBtn');
+
+        uploadBtn.addEventListener('click', () => {
+          pendingVisualUploadIndex = visualNum;
+          visualImageUploader.click();
+        });
+
+        if (customSrc) {
+          imgElem.src = customSrc;
+          imgElem.style.display = 'block';
+          placeholderElem.style.display = 'none';
+        } else {
+          // Attempt loading default image asset
+          imgElem.src = defaultImagePath;
+          imgElem.onload = () => {
+            imgElem.style.display = 'block';
+            placeholderElem.style.display = 'none';
+          };
+          imgElem.onerror = () => {
+            // Also try .jpg if .png fails
+            const altJpgPath = `assets/tech-visual-${visualNum}.jpg`;
+            const testJpg = new Image();
+            testJpg.src = altJpgPath;
+            testJpg.onload = () => {
+              imgElem.src = altJpgPath;
+              imgElem.style.display = 'block';
+              placeholderElem.style.display = 'none';
+            };
+            testJpg.onerror = () => {
+              imgElem.style.display = 'none';
+              placeholderElem.style.display = 'flex';
+            };
+          };
+        }
+      }
+
+      // Show Modal
+      modalBackdrop.classList.add('is-open');
+    }
+
+    // Handle Local Image File Upload for Quick Swap
+    visualImageUploader.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && pendingVisualUploadIndex) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          visualCustomImages[pendingVisualUploadIndex] = event.target.result;
+          const imgElem = modalContentArea.querySelector('#visualImg');
+          const placeholderElem = modalContentArea.querySelector('#placeholderView');
+          if (imgElem && placeholderElem) {
+            imgElem.src = event.target.result;
+            imgElem.style.display = 'block';
+            placeholderElem.style.display = 'none';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      visualImageUploader.value = '';
+    });
+
+    // Close Modal & Unlock Board
+    function closeModal() {
+      modalBackdrop.classList.remove('is-open');
+      
+      if (currentActiveCard) {
+        currentActiveCard.classList.remove('is-active');
+        currentActiveCard.classList.add('visited');
+        currentActiveCard = null;
+      }
+      
+      // UNLOCK board
+      boardGrid.classList.remove('is-locked');
+    }
+
+    // Helper to sanitize html
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    // Reset Board functionality
+    function resetBoard() {
+      closeModal();
+      document.querySelectorAll('.card-slot').forEach(card => {
+        card.classList.remove('visited', 'is-active');
+      });
+      boardGrid.classList.remove('is-locked');
+    }
+
+    // Fullscreen toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    // Event Listeners
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalFooterCloseBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalBackdrop.classList.contains('is-open')) {
+        closeModal();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetBoard);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Initialize
+    buildBoard();
+  </script>
+</body>
+</html>
